@@ -22,6 +22,9 @@ export type bitbuffer = {
 	writeString: (bitbuffer, str: string, excludeLength: boolean?, lengthFormat: format?) -> nil,
 	readString: (bitbuffer, length: number?, lengthFormat: format?) -> string,
 	
+	-- finalize
+	toString: (bitbuffer) -> string,
+
 	-- pointers
 	
 	-- floor pointer to nearest byte
@@ -175,6 +178,7 @@ function bitbuffer.writeFormat(self, format: format, value: number)
 	local bytes = formatsToBytes[format]
 	local f = buffer['write' .. format]
 	
+	 -- believe it or not this is faster than string.unpack/pack
 	local transfer = buffer.create(bytes)
 	f(transfer, 0, value)
 	
@@ -216,6 +220,12 @@ function bitbuffer.readString(self, length: number?, lengthFormat: format?)
 		str ..= string.char(self:readBits(8))
 	end
 	return str
+end
+
+-- finalizing
+
+function bitbuffer.toString(self)
+	return buffer.tostring(self.buffer)
 end
 
 -- pointer manipulation

@@ -95,6 +95,14 @@ buffer:setPointer(0)
 print(buffer:readString(#hello)) -- Output: Hello, World!
 ```
 
+**Finalize**
+
+To finish off, render out the final buffer using `:toString()`
+
+```lua
+buffer:toString()
+```
+
 **Misc**
 
 Attempting to access/point to out-of-buffer bits/bytes will result in an error
