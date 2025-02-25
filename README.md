@@ -98,6 +98,7 @@ print(buffer:readString(#hello)) -- Output: Hello, World!
 **Finalize**
 
 To finish off, render out the final buffer using `:toString()`
+By default the empty end bytes get removed, false the `strip` argument to counter that
 
 ```lua
 buffer:toString()

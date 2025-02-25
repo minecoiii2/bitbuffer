@@ -23,7 +23,7 @@ export type bitbuffer = {
 	readString: (bitbuffer, length: number?, lengthFormat: format?) -> string,
 	
 	-- finalize
-	toString: (bitbuffer) -> string,
+	toString: (bitbuffer, strip: boolean?) -> string,
 
 	-- pointers
 	
@@ -57,19 +57,19 @@ bitbuffer.__index = bitbuffer
 
 -- constructors
 
-function bitbuffer.fromBuffer(buf: buffer)
+function bitbuffer.fromBuffer(buf: buffer): bitbuffer
 	return setmetatable({
 		pointer = 0, -- 0-indexed
 		len = buffer.len(buf) * 8,
 		buffer = buf
-	}, bitbuffer)
+	}, bitbuffer) :: any
 end
 
-function bitbuffer.new(sizeBytes: number)
+function bitbuffer.new(sizeBytes: number): bitbuffer
 	return bitbuffer.fromBuffer(buffer.create(sizeBytes))
 end
 
-function bitbuffer.fromString(str: string)
+function bitbuffer.fromString(str: string): bitbuffer
 	return bitbuffer.fromBuffer(buffer.fromstring(str))
 end
 
@@ -176,6 +176,7 @@ local formatsToBytes = {
 
 function bitbuffer.writeFormat(self, format: format, value: number)
 	local bytes = formatsToBytes[format]
+	assert(bytes, format .. ' is not a valid format')
 	local f = buffer['write' .. format]
 	
 	 -- believe it or not this is faster than string.unpack/pack
@@ -189,6 +190,7 @@ end
 
 function bitbuffer.readFormat(self, format: format)
 	local bytes = formatsToBytes[format]
+	assert(bytes, format .. ' is not a valid format')
 	local transfer = buffer.create(bytes)
 
 	for i = 0, bytes - 1, 1 do
@@ -224,8 +226,14 @@ end
 
 -- finalizing
 
-function bitbuffer.toString(self)
-	return buffer.tostring(self.buffer)
+function bitbuffer.toString(self, strip: boolean?)
+	local str = buffer.tostring(self.buffer)
+
+	if strip == false then
+		return str
+	else
+		return string.gsub(str, '(\0+)$', ''), nil -- remove second returned arg using nil
+	end
 end
 
 -- pointer manipulation
