@@ -1,13 +1,13 @@
 # BitBuffer.luau
 
-BitBuffer - a module that extends the the built-in buffer library
+BitBuffer - a module that extends the built-in buffer library
 by facilitating bit-level writing/reading.
 
 ## Usage
 
 BitBuffer comes with three constructors, use either of these to create a bitbuffer object
 
-```
+```lua
 bitbuffer.new(bytes: number)
 bitbuffer.fromBuffer(buffer: buffer)
 bitbuffer.fromString(str: string)
